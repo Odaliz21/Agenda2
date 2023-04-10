@@ -104,56 +104,29 @@ int main(int argc, char *argv[]) {
 	int x;											/*Almacena las opciones seleccionadas*/
 	int salir = 0;                                  /*bandera para salir*/
 	Agenda Contactos[CANTIDAD]; 					/*Definicion de la variable Contactos con la cantidad*/
-	CargarContactos(Contactos);						/*Menu para cargar datos o iniciar una nueva agenda*/
+	//CargarContactos(Contactos);						/*Menu para cargar datos o iniciar una nueva agenda*/
 	
-	do{											/*Etiqueta para retornar al Menu recursivamente*/
-		if (!HayContactos(Contactos)){				/*Verifica si no hay contactos*/
-			ContactosRegistrados = 0;
-			ContactosEliminados  = 0;
-			/*No hay contactos*/
-			do {
-				x = MenuPrimario();					/*Primer Menu donde la agenda esta vacia*/
-			} while(x < 1 || x > 2);
-			
-			switch (x){								/*En este Menu se validan 2 opciones (Insertar, Salir)*/
-				case 1: 
-					Insertar(Contactos);			/*Menu para insertar datos*/
-					break;
-				case 2:
-					salir = Salir();				/*Centinela para Salir*/
-					break;
-				default:
-					cout << "ERROR, presione una tecla para continuar!." << endl;
-					system("PAUSE>NUL");
-					break;
-			}
-		} else {
-			/*Si hay contactos*/
-			do {
-				x = MenuSecundario();				/*Segundo Menu donde la agenda contiene contactos*/
-			} while(x < 1 || x > 4);
-			
-			switch (x){								/*Este Menu contiene las opciones (Insertar, buscar, listar)*/
-				case 1: 
-					Insertar(Contactos);
-					break;
-				case 2:
-					Buscar(Contactos);				/*Menu para realizar una busqueda de contactos por categorias*/
-					break;
-				case 3: 
-					Listar(Contactos);				/*Listar todos los contactos existentes de manera interactiva*/
-					break;
-				case 4:
-					salir = Salir();				/*Centinela para Salir*/
-					break;
-				default:
-					cout << "ERROR, presione una tecla para continuar!." << endl;
-					system("PAUSE>NUL");
-					break;
-			}
+	do {
+		x = MenuSecundario();	
+	} while(x < 1 || x > 4);
+	
+	switch (x){								/*Este Menu contiene las opciones (Insertar, buscar, listar)*/
+		case 1: 
+			Insertar(Contactos);
+			break;
+		case 2:
+			Buscar(Contactos);				/*Menu para realizar una busqueda de contactos por categorias*/
+			break;
+		case 3: 
+			Listar(Contactos);				/*Listar todos los contactos existentes de manera interactiva*/
+			break;
+		case 4:
+			salir = Salir();				/*Centinela para Salir*/
+			break;
+		default:
+			cout << "ERROR, presione una tecla para continuar!." << endl;
+			system("PAUSE>NUL");
 		}
-	}
-	while (salir == 0);						/*Se retorna al Menu principal en caso de que no haya seleccionado Salir*/
 	
 	return 0;
 }
@@ -237,6 +210,7 @@ void Insertar(struct Agenda Contactos[]){
 				Contactos[ContactosRegistrados].Fecha.Nacimiento = " ";
 			}
 			else{
+				EscribirArchivo(Contactos[ContactosRegistrados]);
 				ContactosRegistrados++;									/*Se incrementa la variable, indicando nuevo contacto*/
 				cout << "\n\tAgregado con exito!" << endl << endl;
 			}
@@ -466,36 +440,8 @@ void Listar(struct Agenda Contactos[]){
 	int x = 0; 									/*N?mero de contacto*/
 	int contactos_restantes = 0;				/*Contactos restantes*/
 	
-	/*Se recorren todos los contactos registrados*/
-	for (; i < ContactosRegistrados; i++){
-		/*Si se encuentran contactos registrados*/
-		if (Contactos[i].Nombre != " "){
-			if (i > 1){
-				contactos_restantes = (ContactosRegistrados - x) - ContactosEliminados;
-				Dormir(1);						/*Aplicar retraso de 1 segundo*/
-				
-				if (contactos_restantes > 1)
-					cout << "\t-- Aun quedan " << contactos_restantes << " por visualizar --" << endl;
-				else if (contactos_restantes == 1)
-					cout << "\t-- Solo queda " << contactos_restantes << " por visualizar --" << endl;
-				
-				Detenerse();
-				cout << endl;
-			}
-			
-			/*Impresion de todos los datos de los contactos resultates*/
-			cout << "\n\tNumero de contacto: " << (x+1) << endl;
-			cout << "\t\tNombre:   " << Contactos[i].Nombre << endl;
-			cout << "\t\tTelefono: " << Contactos[i].Telefono << endl;
-			cout << "\t\tCelular:  " << Contactos[i].Celular << endl;
-			cout << "\t\tEmail:    " << Contactos[i].Email << endl;
-			cout << "\t\tFecha N.: " << Contactos[i].Fecha.Nacimiento << endl << endl;
-			
-			x++;			/*Incremento de la variable de numero de contacto*/
-		}
-	}
+	LeerArchivo();
 	
-	cout << "\t <<< Regresar" << endl;
 	Detenerse();
 	return;
 }
@@ -672,6 +618,7 @@ void CargarContactos(struct Agenda Contactos[]){
 			Contactos[ContactosRegistrados].Celular 		= "+51 913 365 389";
 			Contactos[ContactosRegistrados].Email 			= "odalizangie@gmail.com";
 			Contactos[ContactosRegistrados].Fecha.Nacimiento= "17/10/2002";
+			EscribirArchivo(Contactos[ContactosRegistrados]);
 			ContactosRegistrados++;
 			
 			/*Segundo contacto*/
@@ -680,30 +627,7 @@ void CargarContactos(struct Agenda Contactos[]){
             Contactos[ContactosRegistrados].Celular         = "+51 945 781 221";
             Contactos[ContactosRegistrados].Email           = "patrick@gmail.com";
             Contactos[ContactosRegistrados].Fecha.Nacimiento= "22/08/2000";
-            ContactosRegistrados++;
-			
-			/*Tercer contacto*/
-			Contactos[ContactosRegistrados].Nombre 			= "Pablo";
-			Contactos[ContactosRegistrados].Telefono 		= "+51 221133";
-			Contactos[ContactosRegistrados].Celular 		= "+51 987654321";
-			Contactos[ContactosRegistrados].Email 			= "pablomarmol@gmail.com";
-			Contactos[ContactosRegistrados].Fecha.Nacimiento= "22/08/1993";
-			ContactosRegistrados++;
-			
-			/*Cuarto contacto*/
-            Contactos[ContactosRegistrados].Nombre          = "Josue";
-            Contactos[ContactosRegistrados].Telefono        = "084 784596";
-            Contactos[ContactosRegistrados].Celular         = "+51 926 058 896";
-            Contactos[ContactosRegistrados].Email           = "yadirsupa@gmail.com";
-            Contactos[ContactosRegistrados].Fecha.Nacimiento= "15/03/2001";
-            ContactosRegistrados++;
-			
-			/*Quinto contacto*/
-            Contactos[ContactosRegistrados].Nombre          = "Jhudelka";
-            Contactos[ContactosRegistrados].Telefono        = "084 526394";
-            Contactos[ContactosRegistrados].Celular         = "+51 945 874 965";
-            Contactos[ContactosRegistrados].Email           = "jhudelkarodriguez@gmail.com";
-            Contactos[ContactosRegistrados].Fecha.Nacimiento= "16/04/2002";
+            EscribirArchivo(Contactos[ContactosRegistrados]);
             ContactosRegistrados++;
 			break;
 		case 2:
