@@ -6,6 +6,8 @@
 #include <string.h>					/*Funciones de manejo de cadenas*/
 #include <windows.h>				/*Permite usar comandos de Windows Console*/
 #include <stdio.h>
+#include <fstream>
+#include <string>
 
 #define CANTIDAD 500 				/*Cantidad maxima de contactos: 500*/
 
@@ -45,6 +47,8 @@ int MenuSecundario();				/*Se muestra cuando hay contactos que gestionar*/
 
 /*Relevante e importante*/
 void Insertar(struct Agenda Contactos[]);			/*Inserta contactos en la agenda*/
+void LeerArchivo();
+void EscribirArchivo(struct Agenda Contacto);
 
 /*Relevante e importante*/
 void Buscar(struct Agenda Contactos[]);				/*Busca contactos en la agenda*/
@@ -263,6 +267,44 @@ void Insertar(struct Agenda Contactos[]){
 		}
 	}
 	return;
+}
+
+void LeerArchivo() {
+	ifstream archivo;
+	string texto;
+
+	archivo.open("Contactos.txt", ios::in);
+
+	if (archivo.fail()) {
+		cout << "No se puedo encontrar el archivo";
+		exit(1);
+	}
+
+	while (!archivo.eof()) {
+		getline(archivo, texto);
+		cout << texto << endl;
+	}
+	
+}
+
+void EscribirArchivo(struct Agenda Contacto){
+	ofstream archivo;
+	
+	archivo.open("Contactos.txt",ios::app);
+	
+	if(archivo.fail()){
+		cout<<"No se pudo abri el archivo"<<endl;
+		exit(1);
+	}
+	
+	archivo<<"Nombre: "<<Contacto.Nombre<<endl;
+	archivo<<"Telefono: "<<Contacto.Telefono<<endl;
+	archivo<<"Celular: "<<Contacto.Celular<<endl;
+	archivo<<"Email: "<<Contacto.Email<<endl;
+	archivo<<"Fecha Nacimiento: "<<Contacto.Fecha.Nacimiento<<endl;
+	archivo<<"\n\n";
+	
+	archivo.close();
 }
 
 void Buscar(struct Agenda Contactos[]){
